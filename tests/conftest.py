@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -31,9 +32,26 @@ class FakeTeamProfile:
     period_length: int = 15
 
 
+@dataclass
+class FakeGameState:
+    """Minimal stand-in for ``reeln.models.game.GameState``."""
+
+    game_info: FakeGameInfo = field(default_factory=FakeGameInfo)
+    finished: bool = True
+    finished_at: str = "2026-03-13T18:00:00Z"
+
+
 @pytest.fixture()
 def game_info() -> FakeGameInfo:
     return FakeGameInfo()
+
+
+@pytest.fixture()
+def game_dir(tmp_path: Any) -> Path:
+    """Return a temporary game directory path (simulates reeln game dir)."""
+    d = tmp_path / "game_dir"
+    d.mkdir()
+    return d
 
 
 @pytest.fixture()

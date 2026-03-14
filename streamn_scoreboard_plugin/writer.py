@@ -2,9 +2,32 @@
 
 from __future__ import annotations
 
+import logging
+import re
 from pathlib import Path
 
 from streamn_scoreboard_plugin.sport_mapping import get_game_init_values
+
+log: logging.Logger = logging.getLogger(__name__)
+
+_TIMESTAMP_RE: re.Pattern[str] = re.compile(r"^(\d+:\d{2}:\d{2})\s+(.+)$")
+
+
+def parse_timestamps(content: str) -> list[dict[str, str]]:
+    """Parse OBS scoreboard ``timestamps.txt`` into structured events.
+
+    Each non-blank line is expected to match ``H:MM:SS Description``.
+    Malformed lines are silently skipped.
+
+    Returns a list of dicts with ``timestamp`` and ``description`` keys,
+    matching the contract expected by the Google plugin.
+    """
+    events: list[dict[str, str]] = []
+    for line in content.splitlines():
+        match = _TIMESTAMP_RE.match(line.strip())
+        if match:
+            events.append({"timestamp": match.group(1), "description": match.group(2)})
+    return events
 
 # Filenames matching scoreboard-core.c write_all_files().
 _FILENAMES: dict[str, str] = {
@@ -68,3 +91,32 @@ class ScoreboardWriter:
             filename = _FILENAMES[key]
             path = self._output_dir / filename
             path.write_text(content, encoding="utf-8")
+
+    def clear_timestamps(self) -> None:
+        """Remove stale timestamps.txt from a previous game session."""
+        timestamps_path = self._output_dir / "timestamps.txt"
+        if timestamps_path.exists():
+            timestamps_path.unlink()
+
+    def write_game_finish(self, game_dir: Path) -> Path | None:
+        """Copy timestamps from OBS output to the game directory as chapters.
+
+        Reads ``timestamps.txt`` from the scoreboard output directory and
+        writes it verbatim to ``chapters.txt`` in *game_dir*.
+
+        Returns the path to the written file, or ``None`` if no timestamps
+        were available.
+        """
+        timestamps_path = self._output_dir / "timestamps.txt"
+        if not timestamps_path.exists():
+            log.warning("Scoreboard plugin: timestamps.txt not found in %s", self._output_dir)
+            return None
+
+        content = timestamps_path.read_text(encoding="utf-8")
+        if not content.strip():
+            log.warning("Scoreboard plugin: timestamps.txt is empty")
+            return None
+
+        chapters_path = game_dir / "chapters.txt"
+        chapters_path.write_text(content, encoding="utf-8")
+        return chapters_path

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-14
+
+### Added
+
+- `ON_GAME_FINISH` hook handler — copies `timestamps.txt` from the OBS scoreboard output directory to `chapters.txt` in the game directory for downstream reeln-cli use (YouTube chapter descriptions, ffmpeg chapter injection)
+- Populates `context.shared["game_events"]` with parsed timestamp entries for inter-plugin communication (Google plugin YouTube chapter insertion)
+- Clear stale `timestamps.txt` during `ON_GAME_INIT` to prevent previous game session data from leaking into a new game's finish
+
 ## [0.3.0] - 2026-03-03
 
 ### Added

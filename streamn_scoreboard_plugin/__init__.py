@@ -1,8 +1,8 @@
-"""reeln-cli plugin that bridges game init to OBS scoreboard text files."""
+"""reeln-cli plugin that bridges game lifecycle to OBS scoreboard text files."""
 
 from __future__ import annotations
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from streamn_scoreboard_plugin.plugin import ScoreboardPlugin
 

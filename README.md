@@ -2,7 +2,9 @@
 
 A [reeln-cli](https://github.com/StreamnDad/reeln-cli) plugin that bridges game initialization to the [streamn-scoreboard](https://github.com/StreamnDad/streamn-scoreboard) OBS plugin.
 
-When `reeln game init` runs, this plugin automatically writes initial game state to the scoreboard's 17 text output files — setting team names, clock time, scores, shots, fouls, period, sport, and clearing penalties.
+When `reeln game init` runs, this plugin writes initial game state to the scoreboard's 17 text output files — setting team names, clock time, scores, shots, fouls, period, sport, and clearing penalties. It also clears any stale `timestamps.txt` from a previous session.
+
+When `reeln game finish` runs, the plugin copies `timestamps.txt` (written by OBS during the game) to `chapters.txt` in the game directory and populates `context.shared["game_events"]` for downstream plugins (e.g. Google plugin YouTube chapter insertion).
 
 ## Install
 
@@ -71,6 +73,14 @@ reeln game init Eagles Hawks --sport hockey --level bantam
 ```
 
 The plugin writes initial scoreboard state to the configured output directory. The OBS scoreboard's 100ms write loop takes over once the game is running.
+
+After the game, run:
+
+```bash
+reeln game finish
+```
+
+The plugin copies event timestamps from the scoreboard output to `chapters.txt` in the game directory for downstream use (YouTube chapter descriptions, ffmpeg chapter injection).
 
 ### Clock Resolution
 
