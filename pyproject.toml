@@ -19,7 +19,6 @@ Issues = "https://github.com/StreamnDad/reeln-plugin-streamn-scoreboard/issues"
 
 [project.optional-dependencies]
 dev = [
-    "reeln @ git+https://github.com/StreamnDad/reeln-cli",
     "pytest",
     "pytest-cov",
     "pytest-xdist",
@@ -32,9 +31,6 @@ streamn-scoreboard = "streamn_scoreboard_plugin:ScoreboardPlugin"
 
 [tool.hatch.build.targets.wheel]
 packages = ["streamn_scoreboard_plugin"]
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [tool.hatch.version]
 path = "streamn_scoreboard_plugin/__init__.py"

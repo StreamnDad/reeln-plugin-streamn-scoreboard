@@ -7,16 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-## [0.5.3] - 2026-03-26
+## [0.5.4] - 2026-03-26
 
 ### Fixed
 
-- Move `reeln` from runtime dependency to dev-only — PyPI rejects direct git URL dependencies
+- Remove `reeln` from package metadata entirely — PyPI rejects direct git URL dependencies even in optional extras
 - Disable PyPI attestations in release workflow to fix upload failures
+- Install `reeln` separately in CI/release workflows
 
 ### Changed
 
-- Version bump for PyPI re-publish (v0.5.0–v0.5.2 uploads failed)
+- Version bump for PyPI re-publish (v0.5.0–v0.5.3 uploads failed)
 
 ## [0.5.0] - 2026-03-26
 
