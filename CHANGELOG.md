@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-03-26
+
 ### Added
 
 - Write `home_faceoffs.txt`, `away_faceoffs.txt` faceoff win counters (hockey, lacrosse)
