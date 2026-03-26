@@ -7,6 +7,7 @@ import pytest
 from streamn_scoreboard_plugin.sport_mapping import (
     format_clock,
     get_clock_for_sport,
+    get_default_period_labels,
     get_game_init_values,
 )
 from tests.conftest import FakeGameInfo
@@ -72,6 +73,10 @@ class TestGetGameInitValues:
         assert values["away_penalty_numbers"] == ""
         assert values["away_penalty_times"] == ""
         assert values["sport"] == "hockey"
+        assert values["home_faceoffs"] == "0"
+        assert values["away_faceoffs"] == "0"
+        assert values["default_penalty_duration"] == "120"
+        assert values["default_major_penalty_duration"] == "300"
 
     def test_baseball_init(self) -> None:
         game_info = FakeGameInfo(sport="baseball", home_team="Red Sox", away_team="Yankees")
@@ -81,9 +86,9 @@ class TestGetGameInitValues:
         assert values["home_name"] == "Red Sox"
         assert values["away_name"] == "Yankees"
 
-    def test_returns_seventeen_keys(self) -> None:
+    def test_returns_twenty_two_keys(self) -> None:
         values = get_game_init_values(FakeGameInfo())
-        assert len(values) == 17
+        assert len(values) == 22
 
     def test_baseball_sport_field(self) -> None:
         game_info = FakeGameInfo(sport="baseball", home_team="Red Sox", away_team="Yankees")
@@ -113,3 +118,37 @@ class TestGetGameInitValues:
         game_info = FakeGameInfo(sport="hockey")
         values = get_game_init_values(game_info, period_length=None)
         assert values["clock"] == "20:00"
+
+    def test_hockey_default_period_labels(self) -> None:
+        values = get_game_init_values(FakeGameInfo(sport="hockey"))
+        assert values["period_labels"] == "1\n2\n3\nOT\nOT2\nOT3\nOT4\n"
+
+    def test_basketball_default_period_labels(self) -> None:
+        values = get_game_init_values(FakeGameInfo(sport="basketball"))
+        assert values["period_labels"] == "1\n2\n3\n4\nOT\n"
+
+    def test_custom_period_labels_from_game_info(self) -> None:
+        game_info = FakeGameInfo(sport="hockey")
+        game_info.period_labels = "1\n2\n3\n4\n5\nOT\n2OT\n"
+        values = get_game_init_values(game_info)
+        assert values["period_labels"] == "1\n2\n3\n4\n5\nOT\n2OT\n"
+
+
+class TestGetDefaultPeriodLabels:
+    def test_hockey(self) -> None:
+        assert get_default_period_labels("hockey") == "1\n2\n3\nOT\nOT2\nOT3\nOT4\n"
+
+    def test_basketball(self) -> None:
+        assert get_default_period_labels("basketball") == "1\n2\n3\n4\nOT\n"
+
+    def test_soccer(self) -> None:
+        assert get_default_period_labels("soccer") == "1\n2\nOT\n"
+
+    def test_baseball(self) -> None:
+        assert get_default_period_labels("baseball") == "1\n2\n3\n4\n5\n6\n7\n8\n9\n"
+
+    def test_generic(self) -> None:
+        assert get_default_period_labels("generic") == "1\n"
+
+    def test_unknown_sport(self) -> None:
+        assert get_default_period_labels("curling") == "1\n"

@@ -20,6 +20,7 @@ class FakeGameInfo:
     game_number: int = 1
     venue: str = ""
     period_length: int = 0
+    period_labels: str = ""
 
 
 @dataclass
