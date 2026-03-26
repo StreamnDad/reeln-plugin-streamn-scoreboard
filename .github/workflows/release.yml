@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: uv sync --python 3.11 --frozen --extra dev
 
+      - name: Install reeln-cli
+        run: uv pip install "reeln @ git+https://github.com/StreamnDad/reeln-cli"
+
       - name: Lint
         run: uv run ruff check .
 
