@@ -396,9 +396,6 @@ dependencies = [
 [[package]]
 name = "reeln-plugin-streamn-scoreboard"
 source = { editable = "." }
-dependencies = [
-    { name = "reeln" },
-]
 
 [package.optional-dependencies]
 dev = [
@@ -406,6 +403,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-xdist" },
+    { name = "reeln" },
     { name = "ruff" },
 ]
 
@@ -415,7 +413,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
     { name = "pytest-xdist", marker = "extra == 'dev'" },
-    { name = "reeln", git = "https://github.com/StreamnDad/reeln-cli" },
+    { name = "reeln", marker = "extra == 'dev'", git = "https://github.com/StreamnDad/reeln-cli" },
     { name = "ruff", marker = "extra == 'dev'" },
 ]
 provides-extras = ["dev"]
