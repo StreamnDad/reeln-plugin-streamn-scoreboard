@@ -2,7 +2,7 @@
 
 A [reeln-cli](https://github.com/StreamnDad/reeln-cli) plugin that bridges game initialization to the [streamn-scoreboard](https://github.com/StreamnDad/streamn-scoreboard) OBS plugin.
 
-When `reeln game init` runs, this plugin writes initial game state to the scoreboard's 17 text output files — setting team names, clock time, scores, shots, fouls, period, sport, and clearing penalties. It also clears any stale `timestamps.txt` from a previous session.
+When `reeln game init` runs, this plugin writes initial game state to the scoreboard's 22 text output files — setting team names, clock time, scores, shots, faceoffs, fouls, period labels, penalty durations, sport, and clearing penalties. It also clears any stale `timestamps.txt` from a previous session.
 
 When `reeln game finish` runs, the plugin copies `timestamps.txt` (written by OBS during the game) to `chapters.txt` in the game directory and populates `context.shared["game_events"]` for downstream plugins (e.g. Google plugin YouTube chapter insertion).
 
@@ -54,6 +54,8 @@ Add the scoreboard plugin settings to your reeln-cli config:
 | `away_score.txt` | `0` |
 | `home_shots.txt` | `0` |
 | `away_shots.txt` | `0` |
+| `home_faceoffs.txt` | `0` |
+| `away_faceoffs.txt` | `0` |
 | `home_fouls.txt` | `0` |
 | `away_fouls.txt` | `0` |
 | `home_fouls2.txt` | `0` |
@@ -62,7 +64,10 @@ Add the scoreboard plugin settings to your reeln-cli config:
 | `home_penalty_times.txt` | *(empty)* |
 | `away_penalty_numbers.txt` | *(empty)* |
 | `away_penalty_times.txt` | *(empty)* |
+| `default_penalty_duration.txt` | Minor penalty seconds (e.g., `120` for hockey) |
+| `default_major_penalty_duration.txt` | Major penalty seconds (e.g., `300` for hockey) |
 | `sport.txt` | Sport name (e.g., `hockey`) |
+| `period_labels.txt` | Sport-specific labels (e.g., `1\n2\n3\nOT\nOT2\nOT3\nOT4\n` for hockey) |
 
 ## Usage
 
