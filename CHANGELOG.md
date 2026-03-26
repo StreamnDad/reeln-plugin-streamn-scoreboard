@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-03-26
+
+### Changed
+
+- Version bump for PyPI re-publish (v0.5.0 upload failed mid-flight, PyPI rejects re-uploads)
+
 ## [0.5.0] - 2026-03-26
 
 ### Added
