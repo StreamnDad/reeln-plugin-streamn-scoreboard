@@ -48,6 +48,11 @@ _FILENAMES: dict[str, str] = {
     "away_penalty_numbers": "away_penalty_numbers.txt",
     "away_penalty_times": "away_penalty_times.txt",
     "sport": "sport.txt",
+    "default_penalty_duration": "default_penalty_duration.txt",
+    "default_major_penalty_duration": "default_major_penalty_duration.txt",
+    "home_faceoffs": "home_faceoffs.txt",
+    "away_faceoffs": "away_faceoffs.txt",
+    "period_labels": "period_labels.txt",
 }
 
 

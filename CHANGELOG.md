@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Write `home_faceoffs.txt`, `away_faceoffs.txt` faceoff win counters (hockey, lacrosse)
+- Write `period_labels.txt` with sport-specific defaults (e.g. hockey: 1, 2, 3, OT, OT2, OT3, OT4) or custom labels from `GameInfo.period_labels`
+- `get_default_period_labels()` helper for generating sport-appropriate period label sets
+- Output now matches all 22 files written by OBS scoreboard plugin v0.5.0
+
 ## [0.4.0] - 2026-03-14
 
 ### Added

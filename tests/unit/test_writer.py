@@ -25,12 +25,12 @@ class TestWriteGameInit:
         writer.write_game_init(FakeGameInfo())
         assert output_dir.is_dir()
 
-    def test_writes_all_seventeen_files(self, output_dir: Path) -> None:
+    def test_writes_all_twenty_files(self, output_dir: Path) -> None:
         writer = ScoreboardWriter(output_dir)
         writer.write_game_init(FakeGameInfo())
 
         files = list(output_dir.iterdir())
-        assert len(files) == 17
+        assert len(files) == 22
 
     def test_hockey_file_contents(self, output_dir: Path) -> None:
         game_info = FakeGameInfo(home_team="Eagles", away_team="Hawks", sport="hockey")

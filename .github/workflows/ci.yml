@@ -23,17 +23,14 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
 
-      - name: Install reeln-cli
-        run: uv pip install --system "git+https://github.com/StreamnDad/reeln-cli"
-
       - name: Install dependencies
-        run: uv pip install --system -e ".[dev]"
+        run: uv sync --python ${{ matrix.python-version }} --frozen --extra dev
 
       - name: Lint
-        run: ruff check .
+        run: uv run ruff check .
 
       - name: Type check
-        run: mypy streamn_scoreboard_plugin/
+        run: uv run mypy streamn_scoreboard_plugin/
 
       - name: Test
-        run: python -m pytest tests/ -n auto --cov=streamn_scoreboard_plugin --cov-branch --cov-fail-under=100 -q
+        run: uv run pytest tests/ -n auto --cov=streamn_scoreboard_plugin --cov-branch --cov-fail-under=100 -q
