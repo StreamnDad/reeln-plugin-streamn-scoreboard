@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-## [0.5.2] - 2026-03-26
+## [0.5.3] - 2026-03-26
 
 ### Fixed
 
-- Disable PyPI attestations in release workflow to fix 400 Bad Request on upload
+- Move `reeln` from runtime dependency to dev-only — PyPI rejects direct git URL dependencies
+- Disable PyPI attestations in release workflow to fix upload failures
 
 ### Changed
 
-- Version bump for PyPI re-publish (v0.5.0 and v0.5.1 uploads failed due to attestation verification)
+- Version bump for PyPI re-publish (v0.5.0–v0.5.2 uploads failed)
 
 ## [0.5.0] - 2026-03-26
 

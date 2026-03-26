@@ -9,9 +9,7 @@ description = "reeln-cli plugin that bridges game init to OBS scoreboard text fi
 readme = "README.md"
 license = "AGPL-3.0-only"
 requires-python = ">=3.11"
-dependencies = [
-    "reeln @ git+https://github.com/StreamnDad/reeln-cli",
-]
+dependencies = []
 
 [project.urls]
 Homepage = "https://streamn.dad"
@@ -21,6 +19,7 @@ Issues = "https://github.com/StreamnDad/reeln-plugin-streamn-scoreboard/issues"
 
 [project.optional-dependencies]
 dev = [
+    "reeln @ git+https://github.com/StreamnDad/reeln-cli",
     "pytest",
     "pytest-cov",
     "pytest-xdist",
