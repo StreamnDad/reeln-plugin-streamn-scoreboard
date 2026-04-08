@@ -11,6 +11,7 @@ jobs:
     environment: release
     permissions:
       id-token: write
+      attestations: write
 
     steps:
       - uses: actions/checkout@v4
@@ -44,4 +45,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           verbose: true
-          attestations: false
+          attestations: true
