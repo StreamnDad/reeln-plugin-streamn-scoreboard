@@ -34,8 +34,8 @@ class TestGetClockForSport:
     @pytest.mark.parametrize(
         ("sport", "expected"),
         [
-            ("hockey", "20:00"),
-            ("basketball", "12:00"),
+            ("hockey", "15:00"),
+            ("basketball", "8:00"),
             ("soccer", "45:00"),
             ("football", "30:00"),
             ("lacrosse", "12:00"),
@@ -56,7 +56,7 @@ class TestGetGameInitValues:
         game_info = FakeGameInfo(home_team="Eagles", away_team="Hawks", sport="hockey")
         values = get_game_init_values(game_info)
 
-        assert values["clock"] == "20:00"
+        assert values["clock"] == "15:00"
         assert values["period"] == "1"
         assert values["home_name"] == "Eagles"
         assert values["away_name"] == "Hawks"
@@ -77,6 +77,7 @@ class TestGetGameInitValues:
         assert values["away_faceoffs"] == "0"
         assert values["default_penalty_duration"] == "120"
         assert values["default_major_penalty_duration"] == "300"
+        assert values["period_length"] == "900"
 
     def test_baseball_init(self) -> None:
         game_info = FakeGameInfo(sport="baseball", home_team="Red Sox", away_team="Yankees")
@@ -86,9 +87,14 @@ class TestGetGameInitValues:
         assert values["home_name"] == "Red Sox"
         assert values["away_name"] == "Yankees"
 
-    def test_returns_twenty_two_keys(self) -> None:
+    def test_returns_twenty_three_keys(self) -> None:
         values = get_game_init_values(FakeGameInfo())
-        assert len(values) == 22
+        assert len(values) == 23
+
+    def test_baseball_period_length_zero(self) -> None:
+        game_info = FakeGameInfo(sport="baseball", home_team="Red Sox", away_team="Yankees")
+        values = get_game_init_values(game_info)
+        assert values["period_length"] == "0"
 
     def test_baseball_sport_field(self) -> None:
         game_info = FakeGameInfo(sport="baseball", home_team="Red Sox", away_team="Yankees")
@@ -110,14 +116,16 @@ class TestGetGameInitValues:
     def test_period_length_overrides_sport(self) -> None:
         """Explicit period_length overrides sport-based clock."""
         game_info = FakeGameInfo(sport="hockey")
-        values = get_game_init_values(game_info, period_length=15)
-        assert values["clock"] == "15:00"
+        values = get_game_init_values(game_info, period_length=17)
+        assert values["clock"] == "17:00"
+        assert values["period_length"] == "1020"
 
     def test_period_length_none_falls_back_to_sport(self) -> None:
         """period_length=None uses sport-based clock."""
         game_info = FakeGameInfo(sport="hockey")
         values = get_game_init_values(game_info, period_length=None)
-        assert values["clock"] == "20:00"
+        assert values["clock"] == "15:00"
+        assert values["period_length"] == "900"
 
     def test_hockey_default_period_labels(self) -> None:
         values = get_game_init_values(FakeGameInfo(sport="hockey"))

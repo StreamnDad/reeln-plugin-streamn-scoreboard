@@ -21,7 +21,7 @@ class TestScoreboardPluginAttributes:
 
     def test_version(self) -> None:
         plugin = ScoreboardPlugin()
-        assert plugin.version == "0.4.0"
+        assert plugin.version == "0.6.0"
 
     def test_api_version(self) -> None:
         plugin = ScoreboardPlugin()
@@ -64,7 +64,7 @@ class TestOnGameInit:
 
         plugin.on_game_init(context)
 
-        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "20:00"
+        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "15:00"
         assert (output_dir / "home_name.txt").read_text(encoding="utf-8") == "Eagles"
         assert (output_dir / "away_name.txt").read_text(encoding="utf-8") == "Hawks"
 
@@ -112,7 +112,7 @@ class TestOnGameInit:
 
         plugin.on_game_init(context)
 
-        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "20:00"
+        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "15:00"
 
     def test_no_writer_logs_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         plugin = ScoreboardPlugin()
@@ -308,6 +308,77 @@ class TestOnGameFinish:
 
         assert "game_events" not in context.shared
 
+    def test_populates_shared_scores(
+        self, output_dir: Path, game_dir: Path, plugin_config: dict[str, Any]
+    ) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "home_score.txt").write_text("3", encoding="utf-8")
+        (output_dir / "away_score.txt").write_text("1", encoding="utf-8")
+        (output_dir / "timestamps.txt").write_text("0:00:00 Game Start\n", encoding="utf-8")
+
+        plugin = ScoreboardPlugin(plugin_config)
+        state = FakeGameState()
+        context = HookContext(
+            hook=Hook.ON_GAME_FINISH,
+            data={"game_dir": game_dir, "state": state},
+        )
+
+        plugin.on_game_finish(context)
+
+        assert context.shared["home_score"] == "3"
+        assert context.shared["away_score"] == "1"
+
+    def test_scores_populated_even_without_timestamps(
+        self, output_dir: Path, game_dir: Path, plugin_config: dict[str, Any]
+    ) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "home_score.txt").write_text("5", encoding="utf-8")
+        (output_dir / "away_score.txt").write_text("2", encoding="utf-8")
+
+        plugin = ScoreboardPlugin(plugin_config)
+        state = FakeGameState()
+        context = HookContext(
+            hook=Hook.ON_GAME_FINISH,
+            data={"game_dir": game_dir, "state": state},
+        )
+
+        plugin.on_game_finish(context)
+
+        assert context.shared["home_score"] == "5"
+        assert context.shared["away_score"] == "2"
+        assert "game_events" not in context.shared
+
+    def test_missing_scores_not_in_shared(
+        self, output_dir: Path, game_dir: Path, plugin_config: dict[str, Any]
+    ) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "timestamps.txt").write_text("0:00:00 Game Start\n", encoding="utf-8")
+
+        plugin = ScoreboardPlugin(plugin_config)
+        state = FakeGameState()
+        context = HookContext(
+            hook=Hook.ON_GAME_FINISH,
+            data={"game_dir": game_dir, "state": state},
+        )
+
+        plugin.on_game_finish(context)
+
+        assert "home_score" not in context.shared
+        assert "away_score" not in context.shared
+
+    def test_no_writer_does_not_set_scores(self, game_dir: Path) -> None:
+        plugin = ScoreboardPlugin()
+        state = FakeGameState()
+        context = HookContext(
+            hook=Hook.ON_GAME_FINISH,
+            data={"game_dir": game_dir, "state": state},
+        )
+
+        plugin.on_game_finish(context)
+
+        assert "home_score" not in context.shared
+        assert "away_score" not in context.shared
+
 
 class TestIntegrationWithRegistry:
     def test_full_lifecycle(self, output_dir: Path, plugin_config: dict[str, Any]) -> None:
@@ -320,7 +391,7 @@ class TestIntegrationWithRegistry:
         context = HookContext(hook=Hook.ON_GAME_INIT, data={"game_info": game_info})
         registry.emit(Hook.ON_GAME_INIT, context)
 
-        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "12:00"
+        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "8:00"
         assert (output_dir / "home_name.txt").read_text(encoding="utf-8") == "Storm"
         assert (output_dir / "away_name.txt").read_text(encoding="utf-8") == "Thunder"
         assert (output_dir / "home_score.txt").read_text(encoding="utf-8") == "0"

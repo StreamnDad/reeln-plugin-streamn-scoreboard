@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-04-14
+
+### Added
+
+- Write `period_length.txt` with period duration in seconds — enables OBS plugin to sync custom period lengths from reeln team profiles
+- Populate `context.shared["home_score"]` and `context.shared["away_score"]` on `ON_GAME_FINISH` — downstream plugins can now access final game score
+- Output now matches all 23 files written by OBS scoreboard plugin v0.7.0
+
+### Fixed
+
+- Sport duration defaults now match OBS plugin — hockey 20→15 min, basketball 12→8 min; prevents clock mismatch on game init when no custom period length is set
+
 ## [0.5.4] - 2026-03-26
 
 ### Fixed

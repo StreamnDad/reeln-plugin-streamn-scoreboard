@@ -4,8 +4,8 @@ from __future__ import annotations
 
 # Maps sport name to period duration in minutes (None = no clock / count up).
 _SPORT_DURATION: dict[str, int | None] = {
-    "hockey": 20,
-    "basketball": 12,
+    "hockey": 15,
+    "basketball": 8,
     "soccer": 45,
     "football": 30,
     "lacrosse": 12,
@@ -94,7 +94,8 @@ def get_game_init_values(
     home_team: str = getattr(game_info, "home_team", "")
     away_team: str = getattr(game_info, "away_team", "")
 
-    clock = format_clock(period_length) if period_length is not None else get_clock_for_sport(sport)
+    resolved_minutes: int = period_length if period_length is not None else (_SPORT_DURATION.get(sport) or 0)
+    clock = format_clock(resolved_minutes if resolved_minutes else None)
     minor_secs, major_secs = _SPORT_PENALTY_DURATIONS.get(sport, (120, 300))
     period_labels: str = getattr(game_info, "period_labels", "") or get_default_period_labels(sport)
 
@@ -121,4 +122,5 @@ def get_game_init_values(
         "default_penalty_duration": str(minor_secs),
         "default_major_penalty_duration": str(major_secs),
         "period_labels": period_labels,
+        "period_length": str(resolved_minutes * 60),
     }

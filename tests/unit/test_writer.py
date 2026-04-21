@@ -30,14 +30,14 @@ class TestWriteGameInit:
         writer.write_game_init(FakeGameInfo())
 
         files = list(output_dir.iterdir())
-        assert len(files) == 22
+        assert len(files) == 23
 
     def test_hockey_file_contents(self, output_dir: Path) -> None:
         game_info = FakeGameInfo(home_team="Eagles", away_team="Hawks", sport="hockey")
         writer = ScoreboardWriter(output_dir)
         writer.write_game_init(game_info)
 
-        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "20:00"
+        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "15:00"
         assert (output_dir / "period.txt").read_text(encoding="utf-8") == "1"
         assert (output_dir / "home_name.txt").read_text(encoding="utf-8") == "Eagles"
         assert (output_dir / "away_name.txt").read_text(encoding="utf-8") == "Hawks"
@@ -79,7 +79,7 @@ class TestWriteGameInit:
         game_info = FakeGameInfo(sport="hockey")
         writer = ScoreboardWriter(output_dir)
         writer.write_game_init(game_info)
-        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "20:00"
+        assert (output_dir / "clock.txt").read_text(encoding="utf-8") == "15:00"
 
 
 class TestWriteGameFinish:
@@ -143,6 +143,57 @@ class TestWriteGameFinish:
         writer.write_game_finish(game_dir)
 
         assert (game_dir / "chapters.txt").read_text(encoding="utf-8") == timestamps
+
+
+class TestReadScores:
+    def test_reads_both_scores(self, output_dir: Path) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "home_score.txt").write_text("3", encoding="utf-8")
+        (output_dir / "away_score.txt").write_text("1", encoding="utf-8")
+
+        writer = ScoreboardWriter(output_dir)
+        result = writer.read_scores()
+
+        assert result == ("3", "1")
+
+    def test_strips_whitespace(self, output_dir: Path) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "home_score.txt").write_text("  5\n", encoding="utf-8")
+        (output_dir / "away_score.txt").write_text("2 \n", encoding="utf-8")
+
+        writer = ScoreboardWriter(output_dir)
+        result = writer.read_scores()
+
+        assert result == ("5", "2")
+
+    def test_missing_home_score_returns_none(self, output_dir: Path) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "away_score.txt").write_text("1", encoding="utf-8")
+
+        writer = ScoreboardWriter(output_dir)
+        assert writer.read_scores() is None
+
+    def test_missing_away_score_returns_none(self, output_dir: Path) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "home_score.txt").write_text("3", encoding="utf-8")
+
+        writer = ScoreboardWriter(output_dir)
+        assert writer.read_scores() is None
+
+    def test_missing_both_returns_none(self, output_dir: Path) -> None:
+        output_dir.mkdir(parents=True)
+        writer = ScoreboardWriter(output_dir)
+        assert writer.read_scores() is None
+
+    def test_zero_scores(self, output_dir: Path) -> None:
+        output_dir.mkdir(parents=True)
+        (output_dir / "home_score.txt").write_text("0", encoding="utf-8")
+        (output_dir / "away_score.txt").write_text("0", encoding="utf-8")
+
+        writer = ScoreboardWriter(output_dir)
+        result = writer.read_scores()
+
+        assert result == ("0", "0")
 
 
 class TestClearTimestamps:
