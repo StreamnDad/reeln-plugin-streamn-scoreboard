@@ -53,6 +53,7 @@ _FILENAMES: dict[str, str] = {
     "home_faceoffs": "home_faceoffs.txt",
     "away_faceoffs": "away_faceoffs.txt",
     "period_labels": "period_labels.txt",
+    "period_length": "period_length.txt",
 }
 
 
@@ -96,6 +97,21 @@ class ScoreboardWriter:
             filename = _FILENAMES[key]
             path = self._output_dir / filename
             path.write_text(content, encoding="utf-8")
+
+    def read_scores(self) -> tuple[str, str] | None:
+        """Read home and away scores from the output directory.
+
+        Returns a ``(home_score, away_score)`` tuple, or ``None`` if either
+        file is missing.
+        """
+        home_path = self._output_dir / "home_score.txt"
+        away_path = self._output_dir / "away_score.txt"
+        if not home_path.exists() or not away_path.exists():
+            return None
+        return (
+            home_path.read_text(encoding="utf-8").strip(),
+            away_path.read_text(encoding="utf-8").strip(),
+        )
 
     def clear_timestamps(self) -> None:
         """Remove stale timestamps.txt from a previous game session."""

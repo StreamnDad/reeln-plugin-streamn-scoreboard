@@ -23,7 +23,7 @@ class ScoreboardPlugin:
     """
 
     name: str = "streamn-scoreboard"
-    version: str = "0.4.0"
+    version: str = "0.6.0"
     api_version: int = 1
 
     config_schema: PluginConfigSchema = PluginConfigSchema(
@@ -80,6 +80,11 @@ class ScoreboardPlugin:
         if self._writer is None:
             log.warning("Scoreboard plugin: output_directory not configured, skipping finish")
             return
+
+        scores = self._writer.read_scores()
+        if scores:
+            context.shared["home_score"] = scores[0]
+            context.shared["away_score"] = scores[1]
 
         game_dir = context.data["game_dir"]
         result = self._writer.write_game_finish(game_dir)
